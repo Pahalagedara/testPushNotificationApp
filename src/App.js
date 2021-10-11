@@ -7,7 +7,7 @@
  */
 
 import React,{useEffect} from 'react';
-import { Alert } from 'react-native';
+import {Alert, Button} from 'react-native';
 import type {Node} from 'react';
 import {
   StyleSheet,
@@ -17,32 +17,27 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from "react-native-push-notification";
 
-
-
-
+import { LocalNotification } from './NotifService'
+import RemotePushController from "./RemotePushController";
 
 const App: () => Node = () => {
 
     useEffect(() => {
         const unsubscribe = messaging().onMessage(async remoteMessage => {
             Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+            LocalNotification(JSON.stringify(remoteMessage));
         });
-
-        messaging().onNotificationOpenedApp(remoteMessage => {
-            console.log(
-                'Notification caused app to open from background state:',
-                remoteMessage.notification,
-            );
-        });
-
         return unsubscribe;
     }, []);
 
-
-
-  return (
+    const handleButtonPress = () => {
+        LocalNotification();
+    };
+    return (
         <View style={styles.screen} >
-            <Text style={styles.title} > Push Notification </Text>
+            <Text style={styles.title} > Push Notification1 </Text>
+            <Button title={'Local Push Notification'} onPress={handleButtonPress} />
+            <RemotePushController />
         </View>
   );
 };
